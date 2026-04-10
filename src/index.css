@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Base resets ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text',
+    'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #030308;
+  color: #fff;
+  overflow: hidden;
+}
+
+/* ── Globe tooltip overrides ── */
+.scene-tooltip {
+  pointer-events: none !important;
+}
+
+/* ── Glass panel utility ── */
+.glass-panel {
+  background: rgba(8, 8, 14, 0.88);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ── Smooth transitions ── */
+.transition-smooth {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ── Neon glow utilities ── */
+.glow-gold  { text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
+.glow-green { text-shadow: 0 0 20px rgba(52, 211, 153, 0.5); }
+.glow-red   { text-shadow: 0 0 20px rgba(248, 113, 113, 0.5); }
+.glow-blue  { text-shadow: 0 0 20px rgba(96, 165, 250, 0.5); }
+
+/* ── Fade-in animation ── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ── Slide in from right ── */
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(32px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.animate-slide-in-right {
+  animation: slideInRight 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ── Pulsing ring ── */
+@keyframes ringPulse {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50%       { opacity: 0.3; transform: scale(1.15); }
+}
+.ring-pulse {
+  animation: ringPulse 2s ease-in-out infinite;
+}
+
+/* ── Filter toggle active state ── */
+.filter-active {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* ── Elevation bar animation ── */
+@keyframes growBar {
+  from { width: 0; }
+  to   { width: var(--target-width); }
+}
+.elevation-bar {
+  animation: growBar 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ── Loading spinner ── */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.spinner {
+  animation: spin 1s linear infinite;
+}
