@@ -9,6 +9,7 @@ export const CATEGORY_COLORS = {
   'seven-summits-australia': '#34D399', // Emerald green
   '8000m':                   '#F87171', // Soft red
   'special':                 '#60A5FA', // Sky blue
+  'notable':                 '#A78BFA', // Violet — regionally/culturally significant
 };
 
 // ── Category display labels ────────────────────────────────────────────────
@@ -17,11 +18,12 @@ export const CATEGORY_LABELS = {
   'seven-summits-australia': 'Seven Summits — Australia',
   '8000m':                   '8000m Peak',
   'special':                 'Special',
+  'notable':                 'Notable Peak',
 };
 
 // ── Priority order for colour resolution ─────────────────────────────────
 // Mountains that belong to multiple categories use the first matching priority
-const COLOR_PRIORITY = ['special', 'seven-summits-oceania', 'seven-summits-australia', '8000m'];
+const COLOR_PRIORITY = ['special', 'seven-summits-oceania', 'seven-summits-australia', '8000m', 'notable'];
 
 /**
  * Returns the primary display colour for a mountain's category list.
@@ -47,6 +49,7 @@ export function getCategoryLabel(categories) {
   if (categories.includes('seven-summits-oceania'))   return CATEGORY_LABELS['seven-summits-oceania'];
   if (categories.includes('seven-summits-australia')) return CATEGORY_LABELS['seven-summits-australia'];
   if (categories.includes('8000m'))                   return CATEGORY_LABELS['8000m'];
+  if (categories.includes('notable'))                 return CATEGORY_LABELS['notable'];
 
   return 'Mountain';
 }
@@ -93,6 +96,7 @@ export function getPointRadius(categories) {
     categories.includes('seven-summits-oceania') ||
     categories.includes('seven-summits-australia')
   )                                                   return 0.48;
+  if (categories.includes('notable'))                 return 0.42;
   return 0.30;
 }
 

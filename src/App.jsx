@@ -28,6 +28,7 @@ const ALL_FILTERS = new Set([
   'seven-summits-australia',
   '8000m',
   'special',
+  'notable',
 ]);
 
 export default function App() {

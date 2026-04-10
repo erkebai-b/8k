@@ -12,6 +12,7 @@ const CATEGORY_META = [
   { id: 'seven-summits-australia', label: 'Australia',  emoji: '🦘' },
   { id: '8000m',                   label: '8000m',      emoji: '🎯' },
   { id: 'special',                 label: 'Special',    emoji: '✦'  },
+  { id: 'notable',                 label: 'Notable',    emoji: '⛩'  },
 ];
 
 export default function StatsBar({ mountains, selectedMountain, onMountainClose }) {

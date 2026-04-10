@@ -44,6 +44,14 @@ const FILTER_ITEMS = [
     count: mountainsByCategory['special'].length,
     tip: 'Mauna Kea — tallest mountain on Earth measured from its ocean-floor base.',
   },
+  {
+    id: 'notable',
+    label: 'Notable Peaks',
+    sublabel: 'Regional & cultural icons',
+    color: CATEGORY_COLORS['notable'],
+    count: mountainsByCategory['notable'].length,
+    tip: 'Mount Fuji (Japan) and Jengish Chokusu / Peak Victory (Kyrgyzstan) — regionally and culturally significant peaks.',
+  },
 ];
 
 // ── Info icon ─────────────────────────────────────────────────────────────

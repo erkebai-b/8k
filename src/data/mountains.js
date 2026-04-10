@@ -2,10 +2,11 @@
  * Mountain Explorer 3D — Complete Dataset
  *
  * Categories:
- *   'seven-summits-oceania'   → Gold  — Traditional Seven Summits (Puncak Jaya for Oceania)
- *   'seven-summits-australia' → Green — Bass/Messner list (Kosciuszko for Australia)
- *   '8000m'                   → Red   — The 14 Eight-thousanders
- *   'special'                 → Blue  — Special/notable peaks
+ *   'seven-summits-oceania'   → Gold   — Traditional Seven Summits (Puncak Jaya for Oceania)
+ *   'seven-summits-australia' → Green  — Bass/Messner list (Kosciuszko for Australia)
+ *   '8000m'                   → Red    — The 14 Eight-thousanders
+ *   'special'                 → Blue   — Special/notable peaks (e.g. Mauna Kea)
+ *   'notable'                 → Violet — Regionally / culturally significant peaks
  */
 
 export const mountains = [
@@ -424,6 +425,48 @@ export const mountains = [
   },
 
   // ════════════════════════════════════════════════
+  // NOTABLE PEAKS — Regionally & Culturally Significant
+  // ════════════════════════════════════════════════
+
+  {
+    id: 'fuji',
+    name: 'Mount Fuji',
+    shortName: 'Fuji',
+    elevation: 3776,
+    lat: 35.3606,
+    lng: 138.7274,
+    continent: 'Asia',
+    country: 'Japan',
+    categories: ['notable'],
+    description:
+      'Japan\'s highest and most iconic peak at 3,776 m, Mount Fuji is a nearly symmetrical stratovolcano on Honshu island. A UNESCO World Heritage Site and Shinto sacred mountain, it has been a subject of Japanese art for centuries. The summit crater spans about 780 m in diameter and the last eruption was in 1707.',
+    firstAscent: '663 CE (legendary, En no Gyōja); 1860 (first recorded foreign ascent, Sir Rutherford Alcock)',
+    climbers: 'Sir Rutherford Alcock & party (first documented non-Japanese ascent)',
+    image:
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/080103_hakkai_fuji.jpg/800px-080103_hakkai_fuji.jpg',
+    funFact: 'Approximately 200,000–300,000 people climb Fuji every year during its official climbing season (July–August).',
+  },
+
+  {
+    id: 'jengish-chokusu',
+    name: 'Jengish Chokusu',
+    shortName: 'Jengish Chokusu',
+    elevation: 7439,
+    lat: 42.0358,
+    lng: 80.1256,
+    continent: 'Asia',
+    country: 'Kyrgyzstan / China',
+    categories: ['notable'],
+    description:
+      'Known as Peak Victory (Pobeda in Russian) or Tomur in Chinese, Jengish Chokusu at 7,439 m is the highest peak of the Tian Shan range and the highest mountain in Kyrgyzstan. Straddling the Kyrgyz–Chinese border, it was one of the last major Central Asian peaks to be explored. Its brutal weather and massive avalanche-prone faces make it one of the most dangerous mountains in the world relative to its height.',
+    firstAscent: '1956',
+    climbers: 'Vitaly Abalakov-led Soviet expedition (V. Abalakov, P. Skoriatin & team)',
+    image:
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Pik_Pobedy_-_Jengish_Chokusu.jpg/800px-Pik_Pobedy_-_Jengish_Chokusu.jpg',
+    funFact: 'Also called "Peak Victory" (Pobeda) to commemorate the Soviet victory in WWII. Fatality rate rivals K2.',
+  },
+
+  // ════════════════════════════════════════════════
   // SPECIAL CASE: MAUNA KEA
   // ════════════════════════════════════════════════
 
@@ -454,8 +497,9 @@ export const MOUNTAIN_COUNT = mountains.length;
 
 /** Mountains grouped by category */
 export const mountainsByCategory = {
-  'seven-summits-oceania': mountains.filter(m => m.categories.includes('seven-summits-oceania')),
+  'seven-summits-oceania':   mountains.filter(m => m.categories.includes('seven-summits-oceania')),
   'seven-summits-australia': mountains.filter(m => m.categories.includes('seven-summits-australia')),
-  '8000m': mountains.filter(m => m.categories.includes('8000m')),
-  'special': mountains.filter(m => m.categories.includes('special')),
+  '8000m':                   mountains.filter(m => m.categories.includes('8000m')),
+  'special':                 mountains.filter(m => m.categories.includes('special')),
+  'notable':                 mountains.filter(m => m.categories.includes('notable')),
 };
