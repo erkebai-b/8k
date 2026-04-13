@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── Base resets ── */
+/* ── Base resets ────────────────────────────────────────────────────────── */
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -15,14 +15,42 @@ body {
   background: #030308;
   color: #fff;
   overflow: hidden;
+  /* Prevent pull-to-refresh hijacking the globe drag on mobile */
+  overscroll-behavior: none;
 }
 
-/* ── Globe tooltip overrides ── */
+/* ── Mobile touch optimisations ─────────────────────────────────────────── */
+
+/* Remove the 300 ms tap delay on all interactive elements */
+a, button, input, label, select, textarea, [role="button"] {
+  touch-action: manipulation;
+}
+
+/* Kill the blue flash on tap (iOS / Android) */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Allow native scrolling inside scroll containers */
+.overflow-y-auto, .overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Hide scrollbar on the mobile filter chip row */
+.hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Globe tooltip overrides ─────────────────────────────────────────────── */
 .scene-tooltip {
   pointer-events: none !important;
 }
 
-/* ── Glass panel utility ── */
+/* ── Glass panel utility ─────────────────────────────────────────────────── */
 .glass-panel {
   background: rgba(8, 8, 14, 0.88);
   backdrop-filter: blur(28px);
@@ -30,18 +58,18 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* ── Smooth transitions ── */
+/* ── Smooth transitions ──────────────────────────────────────────────────── */
 .transition-smooth {
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ── Neon glow utilities ── */
+/* ── Neon glow utilities ─────────────────────────────────────────────────── */
 .glow-gold  { text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
 .glow-green { text-shadow: 0 0 20px rgba(52, 211, 153, 0.5); }
 .glow-red   { text-shadow: 0 0 20px rgba(248, 113, 113, 0.5); }
 .glow-blue  { text-shadow: 0 0 20px rgba(96, 165, 250, 0.5); }
 
-/* ── Fade-in animation ── */
+/* ── Animations ─────────────────────────────────────────────────────────── */
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -50,7 +78,6 @@ body {
   animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* ── Slide in from right ── */
 @keyframes slideInRight {
   from { opacity: 0; transform: translateX(32px); }
   to   { opacity: 1; transform: translateX(0); }
@@ -59,7 +86,6 @@ body {
   animation: slideInRight 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* ── Pulsing ring ── */
 @keyframes ringPulse {
   0%, 100% { opacity: 0.8; transform: scale(1); }
   50%       { opacity: 0.3; transform: scale(1.15); }
@@ -68,12 +94,6 @@ body {
   animation: ringPulse 2s ease-in-out infinite;
 }
 
-/* ── Filter toggle active state ── */
-.filter-active {
-  background: rgba(255, 255, 255, 0.08) !important;
-}
-
-/* ── Elevation bar animation ── */
 @keyframes growBar {
   from { width: 0; }
   to   { width: var(--target-width); }
@@ -82,10 +102,28 @@ body {
   animation: growBar 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* ── Loading spinner ── */
+/* Used by the RotateIcon SVG and spinner */
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
 .spinner {
   animation: spin 1s linear infinite;
+}
+
+/* ── Mobile bottom-sheet specifics ──────────────────────────────────────── */
+
+/* Ensure the bottom sheet sits above everything else on mobile */
+@media (max-width: 767px) {
+  /* Prevent accidental text selection while dragging the handle */
+  .drag-handle {
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* Prevent the body from scrolling behind the open bottom sheet */
+  body.sheet-open {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+  }
 }

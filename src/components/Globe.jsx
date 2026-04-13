@@ -1,12 +1,16 @@
 /**
  * Globe.jsx
  * Core 3D interactive globe powered by react-globe.gl (Three.js).
- * Renders mountain markers as vertical spikes scaled by elevation,
- * handles camera fly-to animations, auto-rotation, and hover tooltips.
+ *
+ * Mobile adjustments:
+ *   • 2× larger point radius → easier tap targets
+ *   • Higher initial + fly-to altitude → more globe visible on small screen
+ *   • Tooltip HTML disabled (no hover on touch) — tap opens Sidebar instead
  */
 
 import { useRef, useEffect, useState, useCallback } from 'react';
 import GlobeGL from 'react-globe.gl';
+import { useIsMobile } from '../hooks/useIsMobile';
 import {
   getCategoryColor,
   getPointAltitude,
@@ -14,7 +18,7 @@ import {
   buildTooltipHTML,
 } from '../utils/mountainUtils';
 
-// ── NASA / three-globe CDN textures ─────────────────────────────────────
+// ── NASA / three-globe CDN textures ──────────────────────────────────────
 const TEXTURES = {
   day:   'https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg',
   bump:  'https://unpkg.com/three-globe/example/img/earth-topology.png',
@@ -29,11 +33,12 @@ export default function Globe({
   flyTo,
   onFlyComplete,
 }) {
-  const globeRef  = useRef(null);
-  const [size, setSize] = useState({ w: window.innerWidth, h: window.innerHeight });
+  const isMobile    = useIsMobile();
+  const globeRef    = useRef(null);
   const initialised = useRef(false);
+  const [size, setSize] = useState({ w: window.innerWidth, h: window.innerHeight });
 
-  // ── Responsive sizing ─────────────────────────────────────────────────
+  // ── Responsive resize ─────────────────────────────────────────────────
   useEffect(() => {
     const onResize = () => setSize({ w: window.innerWidth, h: window.innerHeight });
     window.addEventListener('resize', onResize);
@@ -46,18 +51,22 @@ export default function Globe({
       if (!globeRef.current || initialised.current) return;
       initialised.current = true;
 
-      // Start camera looking at the Himalayan arc
-      globeRef.current.pointOfView({ lat: 22, lng: 82, altitude: 2.6 }, 0);
+      // Start looking at the Himalayan arc; pull back more on mobile
+      const startAlt = isMobile ? 3.0 : 2.6;
+      globeRef.current.pointOfView({ lat: 22, lng: 82, altitude: startAlt }, 0);
 
-      // Kick off auto-rotation
       const ctrl = globeRef.current.controls();
       ctrl.autoRotate      = true;
       ctrl.autoRotateSpeed = 0.45;
       ctrl.enableDamping   = true;
       ctrl.dampingFactor   = 0.08;
+      // Restrict zoom range so the globe stays legible
+      ctrl.minDistance     = isMobile ? 115 : 110;
+      ctrl.maxDistance     = isMobile ? 500 : 450;
     }, 300);
     return () => clearTimeout(timer);
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // run once; isMobile is read at mount time from the ref
 
   // ── Auto-rotation toggle ──────────────────────────────────────────────
   useEffect(() => {
@@ -71,49 +80,42 @@ export default function Globe({
   useEffect(() => {
     if (!flyTo || !globeRef.current) return;
 
+    // Pull back slightly more on mobile so the spike is fully in frame
+    const targetAlt = isMobile ? 2.0 : 1.6;
     globeRef.current.pointOfView(
-      { lat: flyTo.lat, lng: flyTo.lng, altitude: 1.6 },
-      2200, // ms duration
+      { lat: flyTo.lat, lng: flyTo.lng, altitude: targetAlt },
+      2200,
     );
 
     const timer = setTimeout(() => onFlyComplete?.(), 2300);
     return () => clearTimeout(timer);
-  }, [flyTo, onFlyComplete]);
+  }, [flyTo, onFlyComplete, isMobile]);
 
-  // ── Point colour — selected mountain turns white ──────────────────────
+  // ── Point colour — white when selected ───────────────────────────────
   const getColor = useCallback(
-    (d) => {
-      if (selectedMountain && d.id === selectedMountain.id) return '#FFFFFF';
-      return getCategoryColor(d.categories);
-    },
+    (d) => (selectedMountain && d.id === selectedMountain.id ? '#FFFFFF' : getCategoryColor(d.categories)),
     [selectedMountain],
   );
 
-  // ── Point altitude — proportional to elevation with sqrt curve ───────
-  const getAltitude = useCallback(
-    (d) => getPointAltitude(d.elevation),
-    [],
-  );
+  // ── Point altitude ────────────────────────────────────────────────────
+  const getAltitude = useCallback((d) => getPointAltitude(d.elevation), []);
 
-  // ── Point radius — Seven Summits are larger ───────────────────────────
+  // ── Point radius — 2× on mobile for touch target size ────────────────
   const getRadius = useCallback(
     (d) => {
-      if (selectedMountain && d.id === selectedMountain.id) {
-        return getPointRadius(d.categories) * 1.4;
-      }
-      return getPointRadius(d.categories);
+      const base = getPointRadius(d.categories);
+      const selected = selectedMountain && d.id === selectedMountain.id ? 1.4 : 1.0;
+      const mobileMult = isMobile ? 2.2 : 1.0;
+      return base * selected * mobileMult;
     },
-    [selectedMountain],
+    [selectedMountain, isMobile],
   );
 
-  // ── Tooltip HTML (shown on hover) ─────────────────────────────────────
+  // ── Tooltip HTML (hover only — disabled on touch devices) ────────────
   const getLabel = useCallback(
-    (d) => buildTooltipHTML(d),
-    [],
+    (d) => (isMobile ? '' : buildTooltipHTML(d)),
+    [isMobile],
   );
-
-  // ── Ring data — pulsing ring around the selected mountain ─────────────
-  const ringData = selectedMountain ? [selectedMountain] : [];
 
   return (
     <div className="absolute inset-0 overflow-hidden">
@@ -122,16 +124,16 @@ export default function Globe({
         width={size.w}
         height={size.h}
 
-        // ── Earth surface ──────────────────────────────────────────────
+        // Earth surface
         globeImageUrl={TEXTURES.day}
         bumpImageUrl={TEXTURES.bump}
         backgroundImageUrl={TEXTURES.stars}
 
-        // ── Atmospheric glow ───────────────────────────────────────────
+        // Atmospheric glow
         atmosphereColor="hsl(215, 100%, 68%)"
         atmosphereAltitude={0.18}
 
-        // ── Mountain point markers ─────────────────────────────────────
+        // Mountain markers
         pointsData={mountains}
         pointLat="lat"
         pointLng="lng"
@@ -143,19 +145,19 @@ export default function Globe({
         pointResolution={10}
         pointTransitionDuration={600}
 
-        // ── Pulsing selection ring ─────────────────────────────────────
-        ringsData={ringData}
+        // Pulsing ring on selected mountain
+        ringsData={selectedMountain ? [selectedMountain] : []}
         ringLat="lat"
         ringLng="lng"
         ringColor={() => (t) => `rgba(255, 255, 255, ${Math.max(0, 0.9 - t)})`}
-        ringMaxRadius={5}
+        ringMaxRadius={isMobile ? 7 : 5}
         ringPropagationSpeed={2}
         ringRepeatPeriod={900}
 
-        // ── Events ────────────────────────────────────────────────────
+        // Events
         onPointClick={(point) => onMountainClick(point)}
 
-        // ── Renderer ──────────────────────────────────────────────────
+        // Renderer
         enablePointerInteraction={true}
         rendererConfig={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
       />
